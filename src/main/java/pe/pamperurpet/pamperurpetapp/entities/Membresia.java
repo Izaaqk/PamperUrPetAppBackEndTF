@@ -4,6 +4,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -19,10 +21,10 @@ public class Membresia {
     private String membresiaelegida_memb;
     private double montopagar_memb;
 
-    @OneToOne(mappedBy = "membresia")
-    private Propietario propietario;
-    @OneToOne(mappedBy = "membresia")
-    private Pago pago;
+    @OneToMany(mappedBy = "membresia", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Propietario> propietarios = new ArrayList<>();
+    @OneToMany(mappedBy = "membresia", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Pago> pagos = new ArrayList<>();
 
     public Membresia(Long id_memb, Long numerotarjeta_memb, String fechavencimiento_memb, Long cvv_memb, String nombrecompleto_memb, String membresiaelegida_memb, double montopagar_memb) {
         this.id_memb = id_memb;
