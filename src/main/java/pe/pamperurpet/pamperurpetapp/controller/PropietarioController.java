@@ -41,6 +41,24 @@ public class PropietarioController {
         return new ResponseEntity<PropietarioDTO>(propietarioDTO, HttpStatus.OK);
     }
 
+    @PostMapping("/login")
+    public ResponseEntity<PropietarioDTO> login(@RequestBody PropietarioDTO propietarioDTO) {
+        try {
+            // Realiza la lógica de autenticación aquí
+            Propietario propietario = propietarioServiceImpl.login(propietarioDTO.getCorreo_prop(), propietarioDTO.getContraseña_prop());
+
+            if (propietario != null) {
+                // Si las credenciales son válidas, devuelve el Propietario
+                PropietarioDTO responseDTO = convertToDto(propietario);
+                return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+            } else {
+                // Si las credenciales son inválidas, devuelve un ResponseEntity con HttpStatus.UNAUTHORIZED
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
     @PostMapping("/propietario/membresia")
     public ResponseEntity<PropietarioDTO> registerWithMembresia(@RequestBody PropietarioDTO propietarioDTO) {
