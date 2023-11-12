@@ -29,8 +29,8 @@ public class Pago {
 
     @OneToMany(mappedBy = "pago", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Reserva> reservas = new ArrayList<>();
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "fk_id_membresia")
+    @ManyToOne(fetch = FetchType.LAZY) // Una mascota pertenece a un propietario
+    @JoinColumn(name = "fk_id_membresia") // Nombre de la columna de la clave foránea
     private Membresia membresia;
 
     public Pago(Long id_pago, String nombreapellido_pago, String correo_pago, String direccion_pago, String distrito_pago, Long telefono_pago, String raza_pago, String tarjeta_pago, String propietario_pago, Long numTarjeta_pago, String mesexpiracion_pago, Long añoexpiracion_pago, Long cvv_pago) {
