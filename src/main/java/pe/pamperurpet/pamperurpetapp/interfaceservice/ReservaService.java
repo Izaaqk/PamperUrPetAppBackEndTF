@@ -12,5 +12,8 @@ public interface ReservaService {
     Reserva register(Reserva reserva);
     public List<ReservaDTO> listReservas();
     public Reserva updateDataReserva(Long id_reser, ReservaDTO nuevosDatos) throws ReservaNotFoundException;
+
+    Reserva getReservaById(Long id_reser);
+
     public ReservaDTO deleteReserva(Long id_reser) throws Exception;
 }
