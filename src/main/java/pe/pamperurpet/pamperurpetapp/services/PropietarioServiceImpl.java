@@ -30,7 +30,18 @@ public class PropietarioServiceImpl implements PropietarioService {
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
+    @Override
+    public Propietario login(String correo, Long contraseña) {
+        Propietario propietario = propietarioRepository.findByCorreo_prop(correo);
 
+        if (propietario != null) {
+            if (propietario.getContraseña_prop().equals(contraseña)) {
+                return propietario;
+            }
+        }
+
+        return null;
+    }
 
     @Override
     public Propietario getPropietarioById(Long propietarioid) {
