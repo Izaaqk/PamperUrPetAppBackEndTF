@@ -33,11 +33,11 @@ public class Propietario {
 
     @OneToMany(mappedBy = "propietario", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Mascota> mascotas = new ArrayList<>();
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "fk_id_membresia")
-    private Membresia membresia;
     @OneToMany(mappedBy = "propietario", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Reserva> reservas = new ArrayList<>();
+    @ManyToOne(fetch = FetchType.LAZY) // Una mascota pertenece a un propietario
+    @JoinColumn(name = "fk_id_membresia") // Nombre de la columna de la clave foránea
+    private Membresia membresia;
 
     public Propietario(Long propietarioid, String nombreapellido_prop, String telefono_prop, String correo_prop, Long contraseña_prop) {
         this.propietarioid = propietarioid;

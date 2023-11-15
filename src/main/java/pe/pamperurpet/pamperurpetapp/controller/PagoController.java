@@ -11,6 +11,7 @@ import pe.pamperurpet.pamperurpetapp.entities.Membresia;
 import pe.pamperurpet.pamperurpetapp.entities.Pago;
 import pe.pamperurpet.pamperurpetapp.interfaceservice.PagoService;
 import pe.pamperurpet.pamperurpetapp.repositories.PagoRepository;
+import pe.pamperurpet.pamperurpetapp.services.MembresiaServiceImpl;
 import pe.pamperurpet.pamperurpetapp.services.PagoServiceImpl;
 
 import java.util.List;
@@ -27,6 +28,9 @@ public class PagoController {
 
     @Autowired //inyectando
     private PagoRepository pagoRepository;
+
+    @Autowired //inyectando
+    private MembresiaServiceImpl membresiaServiceImpl;
 
     @PostMapping("/pago")
     public ResponseEntity<PagoDTO> register(@RequestBody PagoDTO pagoDTO){
@@ -104,6 +108,32 @@ public class PagoController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @PostMapping("/pago/{id_memb}")
+    public ResponseEntity<PagoDTO> registerWithMembresia(@PathVariable Long id_memb, @RequestBody PagoDTO pagoDTO) {
+        try {
+            // Buscar la membresía por su ID utilizando el servicio de membresía (ajusta el nombre del servicio según corresponda)
+            Membresia membresia = membresiaServiceImpl.getMembresiaById(id_memb);
+
+            // Convertir el DTO de pago a entidad Pago
+            Pago pago = convertToEntity(pagoDTO);
+
+            // Establecer la relación con la membresía
+            pago.setMembresia(membresia);
+
+            // Registrar el pago
+            pago = pagoService.register(pago);
+
+            // Convertir la entidad pago a DTO
+            pagoDTO = convertToDto(pago);
+
+            return new ResponseEntity<PagoDTO>(pagoDTO, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
 
     private PagoDTO convertToDto(Pago pago) {
         ModelMapper modelMapper = new ModelMapper();

@@ -6,10 +6,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pe.pamperurpet.pamperurpetapp.dtos.MembresiaDTO;
 import pe.pamperurpet.pamperurpetapp.entities.Membresia;
+import pe.pamperurpet.pamperurpetapp.exceptions.MembresiaNotFoundException;
 import pe.pamperurpet.pamperurpetapp.interfaceservice.MembresiaService;
 import pe.pamperurpet.pamperurpetapp.repositories.MembresiaRepository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,6 +38,21 @@ public class MembresiaServiceImpl implements MembresiaService {
         membresiaRepository.delete(membresia);
 
         return convertToDto(membresia);
+    }
+
+    @Override
+    public Membresia getMembresiaById(Long id_memb) {
+        Optional<Membresia> optionalMembresia = membresiaRepository.findById(id_memb);
+
+        if (optionalMembresia.isPresent()) {
+            return optionalMembresia.get();
+        } else {
+            try {
+                throw new MembresiaNotFoundException("No se encontró un propietario con el ID proporcionado");
+            } catch (MembresiaNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     private List<MembresiaDTO> convertToLisDto(List<Membresia> membresias){

@@ -11,4 +11,6 @@ public interface MembresiaService {
     Membresia register(Membresia membresia);
     public List<MembresiaDTO> listMembresias();
     public MembresiaDTO deleteMembresia(Long id_memb) throws Exception;
+
+    Membresia getMembresiaById(Long id_memb);
 }

@@ -8,12 +8,15 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import pe.pamperurpet.pamperurpetapp.dtos.MembresiaDTO;
 import pe.pamperurpet.pamperurpetapp.dtos.PropietarioDTO;
+import pe.pamperurpet.pamperurpetapp.entities.Admin;
 import pe.pamperurpet.pamperurpetapp.entities.Membresia;
 import pe.pamperurpet.pamperurpetapp.entities.Propietario;
 import pe.pamperurpet.pamperurpetapp.exceptions.PropietarioNotFoundException;
 import pe.pamperurpet.pamperurpetapp.interfaceservice.PropietarioService;
 import pe.pamperurpet.pamperurpetapp.repositories.PagoRepository;
 import pe.pamperurpet.pamperurpetapp.repositories.PropietarioRepository;
+import pe.pamperurpet.pamperurpetapp.services.AdminServiceImpl;
+import pe.pamperurpet.pamperurpetapp.services.MembresiaServiceImpl;
 import pe.pamperurpet.pamperurpetapp.services.PropietarioServiceImpl;
 
 import java.util.List;
@@ -32,6 +35,11 @@ public class PropietarioController {
     private PagoRepository pagoRepository;
     @Autowired //inyectando
     private PropietarioServiceImpl propietarioServiceImpl;
+    @Autowired //inyectando
+    private AdminServiceImpl adminServiceImpl;
+    @Autowired //inyectando
+    private MembresiaServiceImpl membresiaServiceImpl;
+
 
     @PostMapping("/propietario")
     public ResponseEntity<PropietarioDTO> register(@RequestBody PropietarioDTO propietarioDTO){
@@ -40,6 +48,26 @@ public class PropietarioController {
         propietarioDTO = convertToDto(propietario);
         return new ResponseEntity<PropietarioDTO>(propietarioDTO, HttpStatus.OK);
     }
+
+    @PostMapping("/login")
+    public ResponseEntity<PropietarioDTO> login(@RequestBody PropietarioDTO propietarioDTO) {
+        try {
+            // Realiza la lógica de autenticación aquí
+            Propietario propietario = propietarioServiceImpl.login(propietarioDTO.getCorreo_prop(), propietarioDTO.getContraseña_prop());
+
+            if (propietario != null) {
+                // Si las credenciales son válidas, devuelve el Propietario
+                PropietarioDTO responseDTO = convertToDto(propietario);
+                return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+            } else {
+                // Si las credenciales son inválidas, devuelve un ResponseEntity con HttpStatus.UNAUTHORIZED
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 
 
     @PostMapping("/propietario/membresia")
@@ -94,6 +122,52 @@ public class PropietarioController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @PostMapping("/propietario/{adminId}/{membresiaId}")
+    public ResponseEntity<PropietarioDTO> registerWithAdminAndMembresia(
+            @PathVariable Long adminId,
+            @PathVariable Long membresiaId,
+            @RequestBody PropietarioDTO propietarioDTO) {
+        try {
+            // Buscar al administrador por su ID
+            Admin admin = adminServiceImpl.getAdminById(adminId);
+
+            // Buscar la membresía por su ID (asumiendo que tienes un servicio correspondiente para esto)
+            Membresia membresia = membresiaServiceImpl.getMembresiaById(membresiaId);
+
+            // Convertir PropietarioDTO a entidad Propietario
+            Propietario propietario = new Propietario();
+            propietario.setNombreapellido_prop(propietarioDTO.getNombreapellido_prop());
+            propietario.setTelefono_prop(propietarioDTO.getTelefono_prop());
+            propietario.setCorreo_prop(propietarioDTO.getCorreo_prop());
+            propietario.setContraseña_prop(propietarioDTO.getContraseña_prop());
+
+            // Establecer la relación entre Propietario y Membresía
+            propietario.setMembresia(membresia);
+
+            // Establecer la relación entre Propietario y Administrador
+            propietario.setAdmin(admin);
+
+            // Guardar Propietario en la base de datos
+            propietario = propietarioRepository.save(propietario);
+
+            // Convertir el resultado a PropietarioDTO
+            PropietarioDTO resultDTO = new PropietarioDTO();
+            resultDTO.setPropietarioid(propietario.getPropietarioid());
+            resultDTO.setNombreapellido_prop(propietario.getNombreapellido_prop());
+            resultDTO.setTelefono_prop(propietario.getTelefono_prop());
+            resultDTO.setCorreo_prop(propietario.getCorreo_prop());
+            resultDTO.setContraseña_prop(propietario.getContraseña_prop());
+
+            // ... (configura otros campos si es necesario)
+
+            return new ResponseEntity<>(resultDTO, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
 
     @GetMapping("/propietarios")
     public ResponseEntity<List<PropietarioDTO>> listPropietario() {

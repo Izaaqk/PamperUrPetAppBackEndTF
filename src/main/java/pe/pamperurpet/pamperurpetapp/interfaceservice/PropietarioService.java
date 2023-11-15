@@ -10,6 +10,8 @@ public interface PropietarioService {
     public Propietario register(Propietario propietario);
     public List<PropietarioDTO> listPropietarios();
 
+    Propietario login(String correo, Long contraseña);
+
     Propietario getPropietarioById(Long propietarioId);
 
     public Propietario updateDataPropietario(Long propietarioid, PropietarioDTO nuevosDatos) throws PropietarioNotFoundException;

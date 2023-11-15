@@ -51,6 +51,26 @@ public class ReservaServiceImpl implements ReservaService {
         }
     }
 
+    public Reserva actualizarReserva(Reserva reserva) throws Exception {
+        reservaRepository.findById(reserva.getId_reser()).orElseThrow(() -> new Exception("No se encontró entidad"));
+        return reservaRepository.save(reserva);
+    }
+
+    @Override
+    public Reserva getReservaById(Long id_reser) {
+        Optional<Reserva> optionalReserva = reservaRepository.findById(id_reser);
+
+        if (optionalReserva.isPresent()) {
+            return optionalReserva.get();
+        } else {
+            try {
+                throw new ReservaNotFoundException("No se encontró un propietario con el ID proporcionado");
+            } catch (ReservaNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
     public ReservaDTO deleteReserva(Long id_reser) throws Exception {
         Reserva reserva = reservaRepository.findById(id_reser)
                 .orElseThrow(() -> new Exception("No se encontró entidad"));

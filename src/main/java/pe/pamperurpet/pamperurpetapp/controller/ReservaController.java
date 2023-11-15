@@ -242,6 +242,31 @@ public class ReservaController {
         }
     }
 
+    @PutMapping("/reservaupdate")
+    public <Mono> ResponseEntity<ReservaDTO> actualizarReserva(@RequestBody ReservaDTO reservaDetalle) {
+        ReservaDTO reservaDTO;
+        Reserva reserva;
+        try {
+            reserva = convertToEntity(reservaDetalle);
+            reserva = reservaServiceImpl.actualizarReserva(reserva);
+            reservaDTO = convertToDto(reserva);
+            return new ResponseEntity<ReservaDTO>(reservaDTO, HttpStatus.OK);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No se pudo actualizar, sorry");
+        }
+    }
+
+    @GetMapping("/reservas/{id_reser}")
+    public ResponseEntity<ReservaDTO> getReservaById(@PathVariable Long id_reser) {
+        try {
+            Reserva reserva = reservaServiceImpl.getReservaById(id_reser);
+            ReservaDTO responseDTO = convertToDto(reserva);
+            return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @DeleteMapping("/reservadelete/{id_reser}")
     ReservaDTO delete(@PathVariable(value = "id_reser") Long id_reser){
         ReservaDTO reserva;
