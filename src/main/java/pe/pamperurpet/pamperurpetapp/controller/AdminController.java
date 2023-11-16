@@ -106,7 +106,7 @@ public class AdminController {
         Propietario propietario = propietarioService.getPropietarioById(propietarioid);
 
         // Actualiza los campos del propietario con los valores proporcionados en propietarioDTO
-        propietario.setNombreapellido_prop(propietarioDTO.getNombreapellido_prop())
+        propietario.setNombreapellido_prop(propietarioDTO.getNombreapellido_prop());
         propietario.setTelefono_prop(propietarioDTO.getTelefono_prop());
         propietario.setCorreo_prop(propietarioDTO.getCorreo_prop());
         propietario.setContraseña_prop(propietarioDTO.getContraseña_prop());
