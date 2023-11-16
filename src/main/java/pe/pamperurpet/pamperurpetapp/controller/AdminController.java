@@ -93,10 +93,11 @@ public class AdminController {
         }
     }
 
-    @PutMapping("/{id_admin}/modifypropietario/{propietarioid}") // Cambia la ruta para reflejar que estás modificando un propietario
-    public PropietarioDTO modifyPropietario(@PathVariable Long id_admin,
-                                            @PathVariable Long propietarioid,
-                                            @RequestBody PropietarioDTO propietarioDTO) throws AdminNotFoundException {
+    @PutMapping("/{id_admin}/modifypropietario/{propietarioid}")
+    public PropietarioDTO modifyPropietario(
+            @PathVariable Long id_admin,
+            @PathVariable Long propietarioid,
+            @RequestBody PropietarioDTO propietarioDTO)throws AdminNotFoundException{
         // Busca el administrador por ID
         Admin admin = adminService.getAdminById(id_admin);
 
