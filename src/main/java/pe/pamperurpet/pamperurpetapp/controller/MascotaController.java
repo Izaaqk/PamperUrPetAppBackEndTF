@@ -7,8 +7,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import pe.pamperurpet.pamperurpetapp.dtos.MascotaDTO;
+import pe.pamperurpet.pamperurpetapp.dtos.ReservaDTO;
 import pe.pamperurpet.pamperurpetapp.entities.Mascota;
 import pe.pamperurpet.pamperurpetapp.entities.Propietario;
+import pe.pamperurpet.pamperurpetapp.entities.Reserva;
 import pe.pamperurpet.pamperurpetapp.exceptions.MascotaNotFoundException;
 import pe.pamperurpet.pamperurpetapp.exceptions.PropietarioNotFoundException;
 import pe.pamperurpet.pamperurpetapp.interfaceservice.MascotaService;
@@ -74,6 +76,16 @@ public class MascotaController {
         try {
             List<MascotaDTO> mascotas = mascotaServiceImpl.listMascotas();
             return new ResponseEntity<>(mascotas, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    @GetMapping("/mascotas/{id_mas}")
+    public ResponseEntity<MascotaDTO> getMascotaById(@PathVariable Long id_mas) {
+        try {
+            Mascota mascota = mascotaServiceImpl.getMascotaById(id_mas);
+            MascotaDTO responseDTO = convertToDto(mascota);
+            return new ResponseEntity<>(responseDTO, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
