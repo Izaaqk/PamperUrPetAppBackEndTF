@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = {"http://localhost:4200", "http://13.59.192.42"})
+@CrossOrigin(origins = {"http://localhost:4200", "http://18.216.74.240"})
 public class MembresiaController {
     @Autowired //inyectando
     private MembresiaService membresiaService;
