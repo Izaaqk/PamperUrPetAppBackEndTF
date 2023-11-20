@@ -31,6 +31,10 @@ public class Mascota {
     @JoinColumn(name = "fk_propietario_id") // Nombre de la columna de la clave foránea
     private Propietario propietario;
 
+    @ManyToOne(fetch = FetchType.LAZY) // Una mascota pertenece a un propietario
+    @JoinColumn(name = "id_pas") // Nombre de la columna de la clave foránea
+    private Paseador paseador;
+
     @OneToMany(mappedBy = "mascota", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Reserva> reservas = new ArrayList<>();
 

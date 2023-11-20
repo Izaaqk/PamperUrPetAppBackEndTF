@@ -14,6 +14,7 @@ import pe.pamperurpet.pamperurpetapp.entities.Mascota;
 import pe.pamperurpet.pamperurpetapp.entities.Paseador;
 import pe.pamperurpet.pamperurpetapp.entities.Propietario;
 import pe.pamperurpet.pamperurpetapp.exceptions.AdminNotFoundException;
+import pe.pamperurpet.pamperurpetapp.exceptions.PaseadorNotFoundException;
 import pe.pamperurpet.pamperurpetapp.exceptions.PropietarioNotFoundException;
 import pe.pamperurpet.pamperurpetapp.interfaceservice.AdminService;
 import pe.pamperurpet.pamperurpetapp.interfaceservice.MascotaService;
@@ -196,15 +197,17 @@ public class AdminController {
         }
     }
 
-    @PostMapping("/mascota/{adminid}/{propietarioid}")
+    @PostMapping("/mascota/{adminid}/{propietarioid}/{id_pas}")
     public ResponseEntity<MascotaDTO> register(
             @PathVariable Long adminid,
             @PathVariable Long propietarioid,
-            @RequestBody MascotaDTO mascotaDTO) throws AdminNotFoundException, PropietarioNotFoundException {
+            @PathVariable Long id_pas,
+            @RequestBody MascotaDTO mascotaDTO) throws AdminNotFoundException, PropietarioNotFoundException, PaseadorNotFoundException {
         try {
             // Buscar al administrador y al propietario por sus IDs utilizando los servicios correspondientes
             Admin admin = adminServiceImpl.getAdminById(adminid);
             Propietario propietario = propietarioServiceImpl.getPropietarioById(propietarioid);
+            Paseador paseador = paseadorServiceImpl.getPaseadorById(id_pas);
 
             // Convertir el DTO de mascota a entidad Mascota
             Mascota mascota = convertToEntity(mascotaDTO);
@@ -212,6 +215,7 @@ public class AdminController {
             // Establecer la relación con el administrador y el propietario
             mascota.setAdmin(admin);
             mascota.setPropietario(propietario);
+            mascota.setPaseador(paseador);
 
             // Registrar la mascota
             mascota = mascotaServiceImpl.register(mascota);

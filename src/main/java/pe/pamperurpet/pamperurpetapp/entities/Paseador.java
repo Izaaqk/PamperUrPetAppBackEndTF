@@ -32,6 +32,8 @@ public class Paseador {
     private Admin admin;
     @OneToMany(mappedBy = "paseador", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Reserva> reservas = new ArrayList<>();
+    @OneToMany(mappedBy = "paseador", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Mascota> mascotas = new ArrayList<>();
 
     public Paseador(Long id_pas, String nombreapellido_pas, String telefono_pas, String correo_pas, Long contraseña_pas) {
         this.id_pas = id_pas;

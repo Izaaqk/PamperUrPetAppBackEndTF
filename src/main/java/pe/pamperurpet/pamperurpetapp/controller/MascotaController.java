@@ -9,14 +9,17 @@ import org.springframework.web.server.ResponseStatusException;
 import pe.pamperurpet.pamperurpetapp.dtos.MascotaDTO;
 import pe.pamperurpet.pamperurpetapp.dtos.ReservaDTO;
 import pe.pamperurpet.pamperurpetapp.entities.Mascota;
+import pe.pamperurpet.pamperurpetapp.entities.Paseador;
 import pe.pamperurpet.pamperurpetapp.entities.Propietario;
 import pe.pamperurpet.pamperurpetapp.entities.Reserva;
 import pe.pamperurpet.pamperurpetapp.exceptions.MascotaNotFoundException;
+import pe.pamperurpet.pamperurpetapp.exceptions.PaseadorNotFoundException;
 import pe.pamperurpet.pamperurpetapp.exceptions.PropietarioNotFoundException;
 import pe.pamperurpet.pamperurpetapp.interfaceservice.MascotaService;
 import pe.pamperurpet.pamperurpetapp.interfaceservice.PropietarioService;
 import pe.pamperurpet.pamperurpetapp.repositories.PropietarioRepository;
 import pe.pamperurpet.pamperurpetapp.services.MascotaServiceImpl;
+import pe.pamperurpet.pamperurpetapp.services.PaseadorServiceImpl;
 import pe.pamperurpet.pamperurpetapp.services.PropietarioServiceImpl;
 
 import java.util.List;
@@ -36,6 +39,8 @@ public class MascotaController {
     private PropietarioRepository propietarioRepository;
     @Autowired //inyectando
     private PropietarioServiceImpl propietarioServiceImpl;
+    @Autowired //inyectando
+    private PaseadorServiceImpl paseadorServiceImpl;
 
     @PostMapping("/mascota")
     public ResponseEntity<MascotaDTO> register(@RequestBody MascotaDTO mascotaDTO){
@@ -56,6 +61,30 @@ public class MascotaController {
 
             // Establecer la relación con el propietario
             mascota.setPropietario(propietario);
+
+            // Registrar la mascota
+            mascota = mascotaServiceImpl.register(mascota);
+
+            // Convertir la entidad mascota a DTO
+            mascotaDTO = convertToDto(mascota);
+
+            return new ResponseEntity<MascotaDTO>(mascotaDTO, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping("/mascota/{id_pas}")
+        public ResponseEntity<MascotaDTO> register1(@PathVariable Long id_pas, @RequestBody MascotaDTO mascotaDTO) throws PaseadorNotFoundException {
+        try {
+            // Buscar al propietario por su ID utilizando propietarioServiceImpl
+            Paseador paseador = paseadorServiceImpl.getPaseadorById(id_pas);
+
+            // Convertir el DTO de mascota a entidad Mascota
+            Mascota mascota = convertToEntity(mascotaDTO);
+
+            // Establecer la relación con el propietario
+            mascota.setPaseador(paseador);
 
             // Registrar la mascota
             mascota = mascotaServiceImpl.register(mascota);
